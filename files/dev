@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# dev: open (or create) a tmux session on the Mini. Lives at ~/.local/bin/dev on the Mini.
+#
+#   dev            -> session "main"
+#   dev my-task    -> session "my-task" (starts in ~/dev/my-task if that folder exists)
+#   dev -l         -> list the sessions that are running
+#
+# From the laptop:  ssh mini dev my-task
+# To leave a session without stopping it: press Ctrl+b, release, then press d.
+
+set -euo pipefail
+export PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
+
+if [[ "${1:-}" == "-l" || "${1:-}" == "--list" ]]; then
+  tmux list-sessions 2>/dev/null || echo "no sessions running"
+  exit 0
+fi
+
+SESSION="${1:-main}"
+
+if ! tmux has-session -t "=$SESSION" 2>/dev/null; then
+  START_DIR="$HOME"
+  [[ -d "$HOME/dev/$SESSION" ]] && START_DIR="$HOME/dev/$SESSION"
+  tmux new-session -d -s "$SESSION" -c "$START_DIR"
+fi
+
+if [[ -n "${TMUX:-}" ]]; then
+  exec tmux switch-client -t "=$SESSION"
+else
+  exec tmux attach-session -d -t "=$SESSION"
+fi

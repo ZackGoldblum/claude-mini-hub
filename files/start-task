@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# start-task: start an unattended Claude Code session on the Mini.
+# Lives at ~/.local/bin/start-task on the Mini.
+#
+#   start-task <name> <brief-file> [folder]
+#
+#   name        short name, letters, digits and hyphens (also the tmux session name)
+#   brief-file  a text file with the instructions; it becomes Claude's first message
+#   folder      where Claude works; default ~/dev/<name> (created if missing)
+#
+# Claude runs in auto mode inside a tmux session, so it keeps going after you disconnect.
+
+set -euo pipefail
+export PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
+
+NAME="${1:?usage: start-task <name> <brief-file> [folder]}"
+BRIEF="${2:?usage: start-task <name> <brief-file> [folder]}"
+DIR="${3:-$HOME/dev/$NAME}"
+
+[[ "$NAME" =~ ^[A-Za-z0-9_-]+$ ]] || { echo "name may contain only letters, digits, hyphens, underscores"; exit 2; }
+[[ -f "$BRIEF" ]] || { echo "brief file not found: $BRIEF"; exit 2; }
+command -v tmux >/dev/null || { echo "tmux is not installed"; exit 3; }
+command -v claude >/dev/null || { echo "claude is not installed"; exit 3; }
+claude auth status >/dev/null 2>&1 || { echo "claude is not signed in on this Mac: run 'claude auth login' here"; exit 4; }
+if tmux has-session -t "=$NAME" 2>/dev/null; then
+  echo "a session named '$NAME' is already running; pick another name or stop it with: tmux kill-session -t $NAME"
+  exit 5
+fi
+
+BRIEF="$(cd "$(dirname "$BRIEF")" && pwd)/$(basename "$BRIEF")"
+mkdir -p "$DIR"
+tmux new-session -d -s "$NAME" -x 200 -y 50 -c "$DIR"
+tmux send-keys -t "$NAME" "claude --permission-mode auto \"\$(cat '$BRIEF')\"" Enter
+
+# The first time Claude Code starts in a folder it asks whether to trust it, and the
+# cursor starts on "No". This folder was just named by the person starting the task,
+# so answer yes: Down, then Enter.
+for _ in 1 2 3 4 5 6 7 8 9 10; do
+  sleep 2
+  screen="$(tmux capture-pane -p -t "$NAME" 2>/dev/null || true)"
+  if echo "$screen" | grep -q "Yes, I trust this folder"; then
+    tmux send-keys -t "$NAME" Down Enter
+    break
+  fi
+  echo "$screen" | grep -q "Claude Code v" && break
+done
+
+echo "started session '$NAME' in $DIR"
+echo "peek:   tmux capture-pane -p -t $NAME | tail -40"
+echo "attach: dev $NAME"
