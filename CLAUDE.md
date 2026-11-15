@@ -10,6 +10,8 @@ This folder is a setup kit. The person in front of you has a MacBook (this machi
 
 ## How to work
 
+The kit lives in `~/claude-mini-hub` when it was downloaded from the link. If your session started in another folder, run each script by its full path, for example `bash ~/claude-mini-hub/scripts/check.sh`.
+
 1. Start every session by running `bash scripts/check.sh` and showing the result. It is read-only. Each `TODO` line names the playbook step that fixes it.
 2. Follow `PLAYBOOK.md` in order, starting at the first step that is not done. Use the scripts in `scripts/` instead of improvising commands; they are safe to run twice.
 3. After each step, run `bash scripts/check.sh` again and show which lines turned to `ok`.

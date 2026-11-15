@@ -2,7 +2,7 @@
 # laptop-ssh.sh: run on the LAPTOP. Creates the SSH key and the "mini" shortcut.
 # Safe to run twice: it never overwrites an existing key or shortcut.
 # Usage: bash scripts/laptop-ssh.sh mini_username mini_tailscale_ip
-#   e.g. bash scripts/laptop-ssh.sh howard 100.101.102.103
+#   e.g. bash scripts/laptop-ssh.sh jane 100.101.102.103
 set -euo pipefail
 
 USER_ON_MINI="${1:?first argument: your username on the Mini (run whoami there)}"

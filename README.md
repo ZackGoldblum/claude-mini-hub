@@ -15,30 +15,43 @@ This kit connects a MacBook and a Mac Mini so that you can say "have my Mini do 
 - A Mac Mini that stays powered on, with its screen and keyboard available for the first 10 minutes
 - The login password for each Mac
 - A Tailscale account (free for personal use; you can sign in with Google, Microsoft, or Apple)
-- A GitHub account that has been invited to this repository
 
 ## Start
 
-1. This repository is private. Sign in to GitHub in your browser with the account that was invited, open [the repository page](https://github.com/ZackGoldblum/claude-mini-hub), click **Code**, then **Download ZIP**. Safari unpacks it into your Downloads folder; in another browser, double-click the downloaded file.
-2. On the laptop, open Terminal and go into the folder:
-
-   ```bash
-   cd ~/Downloads/claude-mini-hub-main
-   ```
-
-3. Start Claude Code in that folder:
+1. On the laptop, open Terminal and start Claude Code:
 
    ```bash
    claude
    ```
 
-4. Type:
+2. Paste this line:
 
    ```text
-   Set up my Mini. Start with the check.
+   Set up my Mini with https://github.com/ZackGoldblum/claude-mini-hub. Start with the check.
    ```
 
-Claude reads `CLAUDE.md` and `PLAYBOOK.md` in this folder, runs a read-only check, and takes you through each step that is left. Two steps happen at the Mini itself (installing Tailscale and flipping three switches in System Settings). Everything after that happens from the laptop.
+Claude downloads the kit into `~/claude-mini-hub`, reads `CLAUDE.md` and `PLAYBOOK.md` there, runs a read-only check, and takes you through each step that is left. It asks your permission before it downloads or runs anything. Two steps happen at the Mini itself (installing Tailscale and flipping three switches in System Settings). Everything after that happens from the laptop.
+
+To come back to the setup later, start `claude` and say "Run the check in ~/claude-mini-hub".
+
+## If you are Claude Code and you were given this link
+
+The person wants you to run this setup with them. Do these three things in order:
+
+1. Download the kit into `~/claude-mini-hub`. This command needs no git and no GitHub account. Skip it if the folder already contains `PLAYBOOK.md`.
+
+   ```bash
+   mkdir -p ~/claude-mini-hub && curl -fsSL https://github.com/ZackGoldblum/claude-mini-hub/archive/refs/heads/main.tar.gz | tar -xz --strip-components 1 -C ~/claude-mini-hub
+   ```
+
+2. Read `~/claude-mini-hub/CLAUDE.md` and `~/claude-mini-hub/PLAYBOOK.md` in full, and follow them. `CLAUDE.md` says how to guide this person and what you must not do.
+3. Run the check and show the result:
+
+   ```bash
+   bash ~/claude-mini-hub/scripts/check.sh
+   ```
+
+The playbook writes commands as `bash scripts/name.sh`. Run each one by its full path, `bash ~/claude-mini-hub/scripts/name.sh`. The scripts find their own files from any working directory.
 
 ## What is in the folder
 
