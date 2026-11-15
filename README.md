@@ -32,7 +32,7 @@ This kit connects a MacBook and a Mac Mini so that you can say "have my Mini do 
 
 Claude downloads the kit into `~/claude-mini-hub`, reads `CLAUDE.md` and `PLAYBOOK.md` there, runs a read-only check, and takes you through each step that is left. It asks your permission before it downloads or runs anything. Two steps happen at the Mini itself (installing Tailscale and flipping three switches in System Settings). Everything after that happens from the laptop.
 
-To come back to the setup later, start `claude` and say "Run the check in ~/claude-mini-hub".
+To come back to the setup later, start `claude` and say "Run the Mini check".
 
 ## If you are Claude Code and you were given this link
 

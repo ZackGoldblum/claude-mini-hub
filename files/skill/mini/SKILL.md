@@ -78,6 +78,16 @@ ssh -T mini 'cat ~/dev/<name>/REPORT.md'                    # present only when 
 
 Summarize for the user: still working, finished (give the report's main points), or stuck (say on what).
 
+## Check the setup
+
+When the user says "run the Mini check", or when a connection problem needs diagnosing, run the read-only check from the setup kit and explain each `TODO` line in plain words:
+
+```bash
+bash ~/claude-mini-hub/scripts/check.sh
+```
+
+If that folder is missing, download the kit first with the command in [the kit's README](https://github.com/ZackGoldblum/claude-mini-hub).
+
 ## Bring results back
 
 Copy the results to the laptop and open them:
