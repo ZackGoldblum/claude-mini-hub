@@ -34,15 +34,15 @@ fi
 REMOTE
 
 echo "2/3  Helper commands and tmux settings"
-scp -q "$HERE/files/dev" "$HERE/files/start-task" mini:.local/bin/
-$SSH 'chmod +x ~/.local/bin/dev ~/.local/bin/start-task'
+scp -q "$HERE/files/dev" "$HERE/files/start-task" "$HERE/files/serve-site" mini:.local/bin/
+$SSH 'chmod +x ~/.local/bin/dev ~/.local/bin/start-task ~/.local/bin/serve-site'
 if $SSH 'test -f ~/.tmux.conf'; then
   echo "     ~/.tmux.conf already exists on the Mini (left as is)"
 else
   scp -q "$HERE/files/tmux.conf" mini:.tmux.conf
   echo "     copied tmux settings"
 fi
-echo "     copied: dev, start-task"
+echo "     copied: dev, start-task, serve-site"
 
 echo "3/3  tmux"
 if $SSH 'export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"; command -v tmux >/dev/null'; then

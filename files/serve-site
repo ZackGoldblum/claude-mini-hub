@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+# serve-site: host a folder of web pages on the Mini so that only your Tailscale devices can open it.
+# Lives at ~/.local/bin/serve-site on the Mini.
+#
+#   serve-site <name> [folder]   start (or restart) a site; folder defaults to ~/ClaudeCodeProjects/<name>
+#   serve-site -l                list the sites that are running, with their addresses
+#   serve-site -s <name>         stop a site
+#
+# The site listens only on the Mini's Tailscale address (100.x.y.z), so it is not offered
+# to the home Wi-Fi or to the internet. It runs in a tmux session named site-<name>.
+# After the Mini restarts, run serve-site <name> again; the address stays the same.
+
+set -euo pipefail
+export PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
+
+TS="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
+command -v tailscale >/dev/null && TS="tailscale"
+STATE="$HOME/.serve-site"
+mkdir -p "$STATE"
+
+addresses() {  # prints "http://name:port  (or http://ip:port)" for a port
+  local ip host
+  ip="$("$TS" ip -4 2>/dev/null | head -1)"
+  host="$("$TS" status --json 2>/dev/null | python3 -c 'import json,sys; print(json.load(sys.stdin)["Self"]["DNSName"].rstrip("."))' 2>/dev/null || true)"
+  if [[ -n "$host" ]]; then echo "http://$host:$1  (or http://$ip:$1)"; else echo "http://$ip:$1"; fi
+}
+
+case "${1:-}" in
+  -l|--list)
+    found=0
+    for f in "$STATE"/*.port; do
+      [[ -e "$f" ]] || continue
+      n="$(basename "$f" .port)"
+      tmux has-session -t "=site-$n" 2>/dev/null || continue
+      echo "$n  $(addresses "$(cat "$f")")"; found=1
+    done
+    [[ $found == 1 ]] || echo "no sites running"
+    exit 0 ;;
+  -s|--stop)
+    n="${2:?usage: serve-site -s <name>}"
+    tmux kill-session -t "=site-$n" 2>/dev/null && echo "stopped $n" || echo "$n was not running"
+    exit 0 ;;
+esac
+
+NAME="${1:?usage: serve-site <name> [folder]}"
+DIR="${2:-$HOME/ClaudeCodeProjects/$NAME}"
+[[ "$NAME" =~ ^[A-Za-z0-9_-]+$ ]] || { echo "name may contain only letters, digits, hyphens, underscores"; exit 2; }
+[[ -d "$DIR" ]] || { echo "folder not found: $DIR"; exit 2; }
+command -v tmux >/dev/null || { echo "tmux is not installed"; exit 3; }
+python3 -c '' 2>/dev/null || { echo "python3 is not available on this Mac"; exit 3; }
+IP="$("$TS" ip -4 2>/dev/null | head -1)"
+[[ "$IP" == 100.* ]] || { echo "Tailscale is not connected on this Mac"; exit 3; }
+[[ -f "$DIR/index.html" ]] || echo "note: $DIR has no index.html, so the address will show a file list"
+
+tmux kill-session -t "=site-$NAME" 2>/dev/null || true
+if [[ -f "$STATE/$NAME.port" ]]; then
+  PORT="$(cat "$STATE/$NAME.port")"
+else
+  PORT=8800
+  while lsof -nP -iTCP:"$PORT" -sTCP:LISTEN >/dev/null 2>&1 || grep -qx "$PORT" "$STATE"/*.port 2>/dev/null; do PORT=$((PORT + 1)); done
+  echo "$PORT" > "$STATE/$NAME.port"
+fi
+
+tmux new-session -d -s "site-$NAME" -c "$DIR" "python3 -m http.server $PORT --bind $IP"
+for _ in 1 2 3 4 5; do
+  sleep 1
+  curl -s -o /dev/null "http://$IP:$PORT/" && { echo "site '$NAME' is running"; echo "address: $(addresses "$PORT")"; exit 0; }
+done
+echo "the site did not start; look with: tmux attach -t site-$NAME"
+exit 1

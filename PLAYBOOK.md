@@ -71,7 +71,7 @@ Then have the person try it themselves in the second window: `ssh mini`, then `h
 
 ## Step 4: prepare the Mini (laptop)
 
-This step creates the projects folder `~/ClaudeCodeProjects` on the Mini, installs Claude Code there, and copies two helper commands: `dev` (open a session) and `start-task` (start an unattended Claude session).
+This step creates the projects folder `~/ClaudeCodeProjects` on the Mini, installs Claude Code there, and copies three helper commands: `dev` (open a session), `start-task` (start an unattended Claude session), and `serve-site` (host a website that only your Tailscale devices can open).
 
 ```bash
 bash scripts/prepare-mini.sh
@@ -120,16 +120,16 @@ Run `bash scripts/check.sh`. It should print "All set".
 The person opens a new Terminal window, goes to any folder, starts `claude`, and types:
 
 ```text
-Have my Mini build a one-page website that explains Tailscale, SSH and tmux to a beginner. Tell me how to watch it work.
+Have my Mini build and host a one-page website that explains Tailscale, SSH and tmux to a beginner. Tell me how to watch it work.
 ```
 
 Expected: Claude on the laptop writes a brief, starts a session on the Mini, and reports the session name. Then:
 
 1. Watch it: `ssh mini dev task_name` in another window. Leave with Ctrl+b, then d.
 2. Close the laptop lid for a minute, open it, and ask: "Check on my Mini."
-3. When it reports finished, ask: "Bring the result back and open it."
+3. When it reports finished, Claude gives you an address that looks like `http://mini_name.tailnet_name.ts.net:8800`. Open it in the laptop's browser.
 
-Setup is complete when the page opens on the laptop.
+Setup is complete when the page opens on the laptop. The Mini is serving it: the address works on any device signed in to your Tailscale account and on no other device.
 
 ## Troubleshooting
 
@@ -141,6 +141,8 @@ Setup is complete when the page opens on the laptop.
 - **Check says Claude is not signed in on the Mini, though it works at the Mini's screen**: the sign-in is in the Keychain. Do step 5 from the laptop.
 - **The Mini's task sits at a "trust this folder" question**: say "check on my Mini"; the skill answers it. Or attach with `ssh mini dev task_name`, press the Down arrow to reach "Yes, I trust this folder", and press Return.
 - **The Mini vanished from Tailscale after a restart or power cut**: someone must log in at the Mini once; Tailscale starts when the user logs in. Screen Sharing does not work until then.
+- **A site's address stopped working**: the Mini restarted, which stops hosted sites. Say "restart my sites on the Mini", or run `ssh -T mini 'serve-site <name>'`. The address stays the same.
+- **A site's address does not open on one device**: that device is not signed in to Tailscale, which is the intended behavior for any device that is not yours.
 - **A warning "Pseudo-terminal will not be allocated"**: harmless. Use `ssh -T mini '...'` for one-off commands to silence it.
 
 ## Undo
@@ -148,4 +150,4 @@ Setup is complete when the page opens on the laptop.
 Each piece can be removed on its own:
 
 - Laptop: delete the `Host mini` block from `~/.ssh/config`, the files `~/.ssh/id_mini` and `~/.ssh/id_mini.pub`, the folder `~/.claude/skills/mini`, and the marked section in `~/.claude/CLAUDE.md`.
-- Mini: delete the line containing `laptop-to-mini` from `~/.ssh/authorized_keys`, the files `~/.local/bin/dev` and `~/.local/bin/start-task`, and the marked section in `~/.claude/CLAUDE.md`. Your task folders stay in `~/ClaudeCodeProjects` until you delete them. Turn off Remote Login in System Settings.
+- Mini: delete the line containing `laptop-to-mini` from `~/.ssh/authorized_keys`, the files `~/.local/bin/dev`, `~/.local/bin/start-task` and `~/.local/bin/serve-site`, the folder `~/.serve-site`, and the marked section in `~/.claude/CLAUDE.md`. Your task folders stay in `~/ClaudeCodeProjects` until you delete them. Turn off Remote Login in System Settings.

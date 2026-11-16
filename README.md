@@ -7,6 +7,7 @@ This kit connects a MacBook and a Mac Mini so that you can say "have my Mini do 
 - **A private network** between your devices (Tailscale), so the laptop reaches the Mini from any Wi-Fi
 - **A one-word connection**: `ssh mini` opens a terminal on the Mini, with a key file in place of a password
 - **Sessions that keep running** on the Mini after you disconnect (tmux)
+- **Private websites**: the Mini can host a site or web app at an address that only your own devices can open
 - **A Claude that knows the Mini exists**: a skill and a few standing notes, so "have my Mini…" works in any session
 
 ## What you need
@@ -63,20 +64,21 @@ The playbook writes commands as `bash scripts/name.sh`. Run each one by its full
 | `scripts/laptop-ssh.sh` | Creates the SSH key and the `mini` shortcut on the laptop |
 | `scripts/prepare-mini.sh` | Prepares the Mini over SSH: folders, Claude Code, helper commands |
 | `scripts/install-notes.sh` | Installs the `mini` skill and the standing notes on both Macs |
-| `files/` | What gets installed: the skill, the notes, `dev`, `start-task`, tmux settings |
+| `files/` | What gets installed: the skill, the notes, `dev`, `start-task`, `serve-site`, tmux settings |
 
 ## What it changes on your Macs
 
 Every change is additive and listed under "Undo" in `PLAYBOOK.md`. Nothing is exposed to the public internet: the Mini is reachable only from devices signed in to your Tailscale account.
 
 - **Laptop**: `~/.ssh/id_mini` (a new key), one block in `~/.ssh/config`, `~/.claude/skills/mini/`, one section in `~/.claude/CLAUDE.md`
-- **Mini**: one line in `~/.ssh/authorized_keys`, PATH lines in `~/.zshenv`, `~/ClaudeCodeProjects/`, `~/.local/bin/dev` and `start-task`, `~/.tmux.conf` if none exists, one section in `~/.claude/CLAUDE.md`, plus Claude Code, Homebrew, and tmux if they are missing
+- **Mini**: one line in `~/.ssh/authorized_keys`, PATH lines in `~/.zshenv`, `~/ClaudeCodeProjects/`, `~/.local/bin/dev`, `start-task` and `serve-site`, `~/.tmux.conf` if none exists, one section in `~/.claude/CLAUDE.md`, plus Claude Code, Homebrew, and tmux if they are missing
 
 ## Day-to-day use
 
 Say these in any Claude Code session on the laptop:
 
 - "Have my Mini …" starts a task there and tells you its name
+- "Have my Mini build and host …" builds a website or web app there and gives you an address that only your Tailscale devices can open
 - "Check on my Mini" reports whether tasks are working, finished, or stuck
 - "Bring the result back and open it" copies the task folder to `~/Downloads`
 

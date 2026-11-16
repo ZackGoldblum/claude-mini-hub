@@ -1,6 +1,6 @@
 ---
 name: mini
-description: Use when the user asks to run, start, check on, watch, or stop work on their always-on Mac Mini. Typical requests are "have my Mini do X", "run this on the Mini", "check on my Mini", "what is the Mini doing", "is the Mini task done".
+description: Use when the user asks to run, start, check on, watch, or stop work on their always-on Mac Mini, or asks for a website, dashboard, or web app to be built and hosted there. Typical requests are "have my Mini do X", "run this on the Mini", "check on my Mini", "what is the Mini doing", "is the Mini task done", "have my Mini build and host a site".
 ---
 
 # Run work on the Mac Mini
@@ -64,6 +64,9 @@ You are running unattended on a Mac Mini. Nobody is watching this session and no
 ## Done means
 <a check you can run yourself: the file exists and opens, the page loads, the numbers add up>
 
+## Hosting (include only when the result is a website or web app)
+When it works, host it for my own Tailscale devices as your standing notes describe (`serve-site <name>` for a folder of pages). Open the address yourself to confirm the page loads, and put the address in REPORT.md.
+
 ## When you finish
 Write REPORT.md in this folder: what you did, where the results are (full paths), anything you were unsure about. If you cannot finish, write REPORT.md saying what blocked you, then stop.
 ```
@@ -96,6 +99,29 @@ Copy the results to the laptop and open them:
 scp -rq mini:ClaudeCodeProjects/<name> ~/Downloads/<name>
 open ~/Downloads/<name>
 ```
+
+## Websites and web apps on the Mini
+
+The Mini can host a site that only the user's own Tailscale devices can open. It listens on the Mini's Tailscale address, so it is not offered to the home Wi-Fi or the internet.
+
+- When the user asks for a website, dashboard, or web app, keep the "Hosting" section in the brief. The Mini's Claude builds it, hosts it, and writes the address in `REPORT.md`.
+- When the task is finished, read the address from the report and confirm it answers from this laptop before you give it to the user:
+
+  ```bash
+  curl -s -o /dev/null -m 8 -w "%{http_code}\n" http://mini_name.tailnet_name.ts.net:8800/
+  ```
+
+  `200` means it works. If the name does not resolve, use the `100.` form of the address from the same report line. Then open it with `open <address>`.
+- Tell the user the address works on any of their devices that is signed in to Tailscale, including a phone, and on no other device.
+- List, restart, or stop sites:
+
+  ```bash
+  ssh -T mini 'serve-site -l'            # running sites and their addresses
+  ssh -T mini 'serve-site <name>'        # start again, for example after the Mini restarts; same address
+  ssh -T mini 'serve-site -s <name>'     # stop
+  ```
+
+- Never turn on Tailscale Funnel or any other way of making a site public.
 
 ## Add an instruction to a running task
 
