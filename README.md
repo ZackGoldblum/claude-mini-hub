@@ -70,7 +70,7 @@ The playbook writes commands as `bash scripts/name.sh`. Run each one by its full
 Every change is additive and listed under "Undo" in `PLAYBOOK.md`. Nothing is exposed to the public internet: the Mini is reachable only from devices signed in to your Tailscale account.
 
 - **Laptop**: `~/.ssh/id_mini` (a new key), one block in `~/.ssh/config`, `~/.claude/skills/mini/`, one section in `~/.claude/CLAUDE.md`
-- **Mini**: one line in `~/.ssh/authorized_keys`, PATH lines in `~/.zshenv`, the folder `Claude Code Projects` on the Desktop, `~/.local/bin/dev` and `start-task`, `~/.tmux.conf` if none exists, one section in `~/.claude/CLAUDE.md`, plus Claude Code, Homebrew, and tmux if they are missing
+- **Mini**: one line in `~/.ssh/authorized_keys`, PATH lines in `~/.zshenv`, `~/ClaudeCodeProjects/`, `~/.local/bin/dev` and `start-task`, `~/.tmux.conf` if none exists, one section in `~/.claude/CLAUDE.md`, plus Claude Code, Homebrew, and tmux if they are missing
 
 ## Day-to-day use
 

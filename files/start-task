@@ -6,7 +6,7 @@
 #
 #   name        short name, letters, digits and hyphens (also the tmux session name)
 #   brief-file  a text file with the instructions; it becomes Claude's first message
-#   folder      where Claude works; default "~/Desktop/Claude Code Projects/<name>" (created if missing)
+#   folder      where Claude works; default ~/ClaudeCodeProjects/<name> (created if missing)
 #
 # Claude runs in auto mode inside a tmux session, so it keeps going after you disconnect.
 
@@ -15,7 +15,7 @@ export PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
 
 NAME="${1:?usage: start-task <name> <brief-file> [folder]}"
 BRIEF="${2:?usage: start-task <name> <brief-file> [folder]}"
-DIR="${3:-$HOME/Desktop/Claude Code Projects/$NAME}"
+DIR="${3:-$HOME/ClaudeCodeProjects/$NAME}"
 
 [[ "$NAME" =~ ^[A-Za-z0-9_-]+$ ]] || { echo "name may contain only letters, digits, hyphens, underscores"; exit 2; }
 [[ -f "$BRIEF" ]] || { echo "brief file not found: $BRIEF"; exit 2; }

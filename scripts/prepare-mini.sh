@@ -9,12 +9,7 @@ SSH="ssh -T -o BatchMode=yes -o ConnectTimeout=10 mini"
 echo "1/3  Folders, PATH, and Claude Code on the Mini"
 $SSH 'bash -s' <<'REMOTE'
 set -e
-if ! ls "$HOME/Desktop" >/dev/null 2>&1; then
-  echo "The Mini does not let remote sessions use its Desktop."
-  echo "On the Mini: System Settings > General > Sharing, click the (i) next to Remote Login, turn on 'Allow full disk access for remote users'. Then run this script again."
-  exit 1
-fi
-mkdir -p "$HOME/Desktop/Claude Code Projects" "$HOME/.local/bin"
+mkdir -p "$HOME/ClaudeCodeProjects" "$HOME/.local/bin"
 
 # Commands sent over SSH do not read ~/.zshrc, so they would not find
 # claude, tmux or brew. ~/.zshenv is read every time, so the PATH goes there.

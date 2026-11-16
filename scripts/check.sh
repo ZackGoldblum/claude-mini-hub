@@ -60,8 +60,7 @@ else
     if command -v claude >/dev/null && claude auth status >/dev/null 2>&1; then echo login=1; else echo login=0; fi
     command -v tmux >/dev/null && echo tmux=1 || echo tmux=0
     [ -x "$HOME/.local/bin/dev" ] && [ -x "$HOME/.local/bin/start-task" ] && echo tools=1 || echo tools=0
-    ls "$HOME/Desktop" >/dev/null 2>&1 && echo desk=1 || echo desk=0
-    [ -d "$HOME/Desktop/Claude Code Projects" ] && echo devdir=1 || echo devdir=0
+    [ -d "$HOME/ClaudeCodeProjects" ] && echo devdir=1 || echo devdir=0
     echo "sleep=$(pmset -g 2>/dev/null | awk "\$1==\"sleep\" {print \$2}")"
     grep -q "mini-hub:start" "$HOME/.claude/CLAUDE.md" 2>/dev/null && echo notes=1 || echo notes=0
   ' 2>/dev/null)"
@@ -71,8 +70,7 @@ else
   [ "$(get login)" = 1 ]  && ok "Claude Code is signed in (works over SSH)" || miss "Claude Code is signed in (works over SSH)" "step 5"
   [ "$(get tmux)" = 1 ]   && ok "tmux is installed" || miss "tmux is installed" "step 4 (Homebrew, then tmux)"
   [ "$(get tools)" = 1 ]  && ok "Helper commands 'dev' and 'start-task' are installed" || miss "Helper commands 'dev' and 'start-task' are installed" "step 4"
-  [ "$(get desk)" = 1 ]   && ok "Remote sessions can use the Mini's Desktop" || miss "Remote sessions can use the Mini's Desktop" "Remote Login > (i) > Allow full disk access for remote users (step 2)"
-  [ "$(get devdir)" = 1 ] && ok "Projects folder 'Claude Code Projects' exists on the Mini's Desktop" || miss "Projects folder 'Claude Code Projects' exists on the Mini's Desktop" "step 4"
+  [ "$(get devdir)" = 1 ] && ok "Projects folder ~/ClaudeCodeProjects exists" || miss "Projects folder ~/ClaudeCodeProjects exists" "step 4"
   [ "$(get sleep)" = 0 ]  && ok "The Mini never sleeps" || miss "The Mini never sleeps" "System Settings > Energy on the Mini (step 2)"
   [ "$(get notes)" = 1 ]  && ok "The Mini's Claude has its standing notes" || miss "The Mini's Claude has its standing notes" "step 6"
 fi

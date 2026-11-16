@@ -32,7 +32,7 @@ One setting for later: in the [Tailscale admin console](https://login.tailscale.
 
 Do this at the Mini's own keyboard and screen.
 
-1. Open **System Settings > General > Sharing**. Turn on **Remote Login**. This lets another computer open a terminal on the Mini. Then click the **(i)** next to Remote Login and turn on **Allow full disk access for remote users**. Tasks keep their files in a folder on the Mini's Desktop, and macOS blocks remote sessions from the Desktop without this setting.
+1. Open **System Settings > General > Sharing**. Turn on **Remote Login**. This lets another computer open a terminal on the Mini.
 2. On the same page, turn on **Screen Sharing**. This lets the laptop show the Mini's screen later, so you won't need to walk to it.
 3. Open **System Settings > Energy**. Turn on **Prevent automatic sleeping when the display is off**, **Wake for network access**, and **Start up automatically after a power failure**.
 4. Open Terminal on the Mini and type `whoami`. Write down the answer. It is your username on the Mini.
@@ -71,7 +71,7 @@ Then have the person try it themselves in the second window: `ssh mini`, then `h
 
 ## Step 4: prepare the Mini (laptop)
 
-This step creates the projects folder on the Mini (`Claude Code Projects`, on its Desktop), installs Claude Code there, and copies two helper commands: `dev` (open a session) and `start-task` (start an unattended Claude session).
+This step creates the projects folder `~/ClaudeCodeProjects` on the Mini, installs Claude Code there, and copies two helper commands: `dev` (open a session) and `start-task` (start an unattended Claude session).
 
 ```bash
 bash scripts/prepare-mini.sh
@@ -87,12 +87,12 @@ In the second Terminal window:
 
 ```bash
 ssh mini
-cd ~/Desktop/"Claude Code Projects"
+cd ~/ClaudeCodeProjects
 claude
 ```
 
 1. Claude Code shows a sign-in link. Press `c` to copy it, paste it into the laptop's browser, approve, and paste the code it shows back into the terminal.
-2. When it asks whether you trust the folder `Claude Code Projects`, press the Down arrow to reach "Yes, I trust this folder" and press Return. The cursor starts on "No, exit".
+2. When it asks whether you trust the folder `ClaudeCodeProjects`, press the Down arrow to reach "Yes, I trust this folder" and press Return. The cursor starts on "No, exit".
 3. Type `/exit`, then `exit` to come back to the laptop.
 
 Verify from the laptop:
@@ -141,7 +141,6 @@ Setup is complete when the page opens on the laptop.
 - **Check says Claude is not signed in on the Mini, though it works at the Mini's screen**: the sign-in is in the Keychain. Do step 5 from the laptop.
 - **The Mini's task sits at a "trust this folder" question**: say "check on my Mini"; the skill answers it. Or attach with `ssh mini dev task_name`, press the Down arrow to reach "Yes, I trust this folder", and press Return.
 - **The Mini vanished from Tailscale after a restart or power cut**: someone must log in at the Mini once; Tailscale starts when the user logs in. Screen Sharing does not work until then.
-- **"Operation not permitted" when a command touches the Mini's Desktop**: on the Mini, open System Settings > General > Sharing, click the (i) next to Remote Login, and turn on "Allow full disk access for remote users".
 - **A warning "Pseudo-terminal will not be allocated"**: harmless. Use `ssh -T mini '...'` for one-off commands to silence it.
 
 ## Undo
@@ -149,4 +148,4 @@ Setup is complete when the page opens on the laptop.
 Each piece can be removed on its own:
 
 - Laptop: delete the `Host mini` block from `~/.ssh/config`, the files `~/.ssh/id_mini` and `~/.ssh/id_mini.pub`, the folder `~/.claude/skills/mini`, and the marked section in `~/.claude/CLAUDE.md`.
-- Mini: delete the line containing `laptop-to-mini` from `~/.ssh/authorized_keys`, the files `~/.local/bin/dev` and `~/.local/bin/start-task`, and the marked section in `~/.claude/CLAUDE.md`. Your task folders stay in `Claude Code Projects` on the Desktop until you delete them. Turn off Remote Login in System Settings.
+- Mini: delete the line containing `laptop-to-mini` from `~/.ssh/authorized_keys`, the files `~/.local/bin/dev` and `~/.local/bin/start-task`, and the marked section in `~/.claude/CLAUDE.md`. Your task folders stay in `~/ClaudeCodeProjects` until you delete them. Turn off Remote Login in System Settings.
