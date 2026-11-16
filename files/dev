@@ -2,7 +2,7 @@
 # dev: open (or create) a tmux session on the Mini. Lives at ~/.local/bin/dev on the Mini.
 #
 #   dev            -> session "main"
-#   dev my-task    -> session "my-task" (starts in ~/dev/my-task if that folder exists)
+#   dev my-task    -> session "my-task" (starts in "~/Desktop/Claude Code Projects/my-task" if that folder exists)
 #   dev -l         -> list the sessions that are running
 #
 # From the laptop:  ssh mini dev my-task
@@ -20,7 +20,7 @@ SESSION="${1:-main}"
 
 if ! tmux has-session -t "=$SESSION" 2>/dev/null; then
   START_DIR="$HOME"
-  [[ -d "$HOME/dev/$SESSION" ]] && START_DIR="$HOME/dev/$SESSION"
+  [[ -d "$HOME/Desktop/Claude Code Projects/$SESSION" ]] && START_DIR="$HOME/Desktop/Claude Code Projects/$SESSION"
   tmux new-session -d -s "$SESSION" -c "$START_DIR"
 fi
 

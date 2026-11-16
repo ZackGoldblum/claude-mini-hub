@@ -18,19 +18,19 @@ Do the steps yourself. The user is not a programmer. Report in plain words what 
 
 ## Start a task
 
-1. Pick a short task name: lowercase letters, digits, hyphens (for example `tailscale-explainer`). The Mini works in `~/dev/<name>`.
+1. Pick a short task name: lowercase letters, digits, hyphens (for example `tailscale-explainer`). The Mini works in `~/Desktop/Claude Code Projects/<name>`, a folder the user can see on the Mini's Desktop. The path contains spaces, so keep the quotes exactly as shown in the commands below.
 2. Write a brief to a temporary file on the laptop. Use the template below. Fill in every section from what the user asked and from this conversation. If the task depends on files that exist only on the laptop, copy them in step 3.
 3. Copy the brief, and any input files, to the Mini:
 
    ```bash
-   ssh -T mini 'mkdir -p ~/dev/<name>'
-   scp -q /path/to/brief.md mini:dev/<name>/BRIEF.md
+   ssh -T mini 'mkdir -p "$HOME/Desktop/Claude Code Projects/<name>"'
+   scp -q /path/to/brief.md "mini:Desktop/Claude Code Projects/<name>/BRIEF.md"
    ```
 
 4. Start it:
 
    ```bash
-   ssh -T mini 'start-task <name> ~/dev/<name>/BRIEF.md'
+   ssh -T mini 'start-task <name> "$HOME/Desktop/Claude Code Projects/<name>/BRIEF.md"'
    ```
 
 5. Wait 15 seconds, then look at the screen:
@@ -73,7 +73,7 @@ Write REPORT.md in this folder: what you did, where the results are (full paths)
 ```bash
 ssh -T mini 'dev -l'                                        # which sessions exist
 ssh -T mini 'tmux capture-pane -p -t <name> | tail -40'     # what the screen shows now
-ssh -T mini 'cat ~/dev/<name>/REPORT.md'                    # present only when finished
+ssh -T mini 'cat "$HOME/Desktop/Claude Code Projects/<name>/REPORT.md"'   # present only when finished
 ```
 
 Summarize for the user: still working, finished (give the report's main points), or stuck (say on what).
@@ -93,7 +93,7 @@ If that folder is missing, download the kit first with the command in [the kit's
 Copy the results to the laptop and open them:
 
 ```bash
-scp -rq mini:dev/<name> ~/Downloads/<name>
+scp -rq "mini:Desktop/Claude Code Projects/<name>" ~/Downloads/<name>
 open ~/Downloads/<name>
 ```
 
